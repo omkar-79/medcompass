@@ -75,14 +75,14 @@ def push_responses(call_report_id: str, response: str):
 
 
 # if __name__ == "__main__":
-# call_script = get_call_scripts()
-# print("Call Script:")
-# for entry in call_script:
-#     print(f"\nReport ID: {entry['call_report_id']}")
-#     print(f"Patient: {entry['patient_number']}")
-#     print(f"Time: {entry['time']}")
-#     print("Questions:")
-#     for q in entry["questions"]:
-#         print(f" - {q}")
+#     call_script = get_call_scripts()
+#     print("Call Script:")
+#     for entry in call_script:
+#         print(f"\nReport ID: {entry['call_report_id']}")
+#         print(f"Patient: {entry['patient_number']}")
+#         print(f"Time: {entry['time']}")
+#         print("Questions:")
+#         for q in entry["questions"]:
+#             print(f" - {q}")
 
 # push_responses("R0001", "Sample Response")
