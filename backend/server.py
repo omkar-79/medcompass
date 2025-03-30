@@ -1,8 +1,11 @@
 import os
+import sys
 from flask import Flask, request
 from twilio.twiml.voice_response import VoiceResponse, Gather
 from dotenv import load_dotenv
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from database.scripts.call_script import get_call_scripts
 # Load environment variables
 load_dotenv()
 
@@ -10,16 +13,35 @@ app = Flask(__name__)
 
 # List of predefined questions
 questions = [
-    "What is your current health condition?",
-    "Are you experiencing any pain or discomfort?",
-    "Have you taken your prescribed medication today?"
+"Since your discharge, how have you been feeling?",
+"Have you experienced any new or worsening symptoms since you left the hospital?",
+"Are you taking your medications as prescribed?",
+"Have you experienced any side effects or issues with your medications?",
+"Do you have any upcoming follow-up appointments scheduled?",
+"Have you been able to schedule any follow-up visits if not already done?",
+"Is there anything about your recovery that you don’t understand or need clarification on?",
+"Do you have enough support at home to assist with your recovery?"
 ]
 
+def appendquestions(dynamic_questions):
+    global questions
+    questions = questions + dynamic_questions
+    return questions
 # Store call states
 call_sessions = {}
 
 @app.route("/voice", methods=["POST"])
 def voice():
+    # print(request.headers)
+    current_number = open("CALLREPORTID", 'r')
+    current_number = current_number.read()
+    dynamic_questions = get_call_scripts()
+    for patient in dynamic_questions:
+        print(patient["patient_number"])
+        print(current_number)
+        if patient["patient_number"] == current_number:
+            appendquestions(patient["questions"])
+            print(questions)
     """Handles the initial call interaction."""
     response = VoiceResponse()
     gather = Gather(num_digits=1, action="/handle-availability", method="POST")
