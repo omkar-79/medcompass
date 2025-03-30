@@ -1,3 +1,7 @@
+# MedCompass
+
+MedCompass is a health-focused web application built with React and Vite. It makes patient follow-up simpler and stress free. It helps in automating scheduled calls to patients after they’ve been discharged, asks the right questions based on their health condition, and gently checks how they’re doing. Everything is tracked in a clean, easy to use dashboard, giving healthcare teams a clear picture of each patient’s recovery, all without the endless phone calls and manual check-ins.
+
 ## 🛠️ Tech Stack Used
 
 ![Twilio](https://img.shields.io/badge/Twilio-%23F22F46.svg?style=flat&logo=twilio&logoColor=white)
