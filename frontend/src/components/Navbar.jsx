@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav className="flex justify-between items-center p-12">
       <div className="flex gap-20 px-10">
         <h1>NARAD</h1>
-        <Link to="/scriptReports" className="hover:text-[#20cc5c]">
+        <Link to="/report" className="hover:text-[#20cc5c]">
           Dashboard
         </Link>
       </div>
