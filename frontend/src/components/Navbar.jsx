@@ -6,14 +6,15 @@ const Navbar = () => {
     <nav className="flex justify-between items-center p-12">
       <div className="flex gap-20 px-20">
         <h1>NARAD</h1>
-        <a href="#">Dashboard</a>
+        <Link to="#" className="">
+          Dashboard
+        </Link>
       </div>
-      <div className="flex gap-10 px-20">
+      <div className="flex justify-between items-center gap-10 px-20">
         <a href="#">Team</a>
-        <Link to="#"
-            className="bg-[#1adb5d]"
-            >
-            Devpost</Link>
+        <Link to="#" className="bg-[#20cc5c] py-2 rounded-2xl px-4">
+          Devpost
+        </Link>
       </div>
     </nav>
   );

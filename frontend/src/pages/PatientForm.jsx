@@ -24,7 +24,7 @@ const PatientForm = () => {
   return (
     <div className="flex justify-center pt-20">
       <form onSubmit={handleSubmit} className="w-full max-w-3/4 p-6 shadow-md rounded-lg">
-        <h2 className="text-xl text-center font-semibold mb-4">Patient Details</h2>
+        <h2 className="text-2xl text-center font-semibold mb-8">Patient Details</h2>
         
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -36,7 +36,7 @@ const PatientForm = () => {
               name="firstName" 
               value={formData.firstName} 
               onChange={handleChange} 
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+              className="appearance-none block w-full bg-[#e1f9e1] text-gray-700 border border-[#1adb5d] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-[#149c47]" 
               required 
             />
           </div>
@@ -50,7 +50,7 @@ const PatientForm = () => {
               name="lastName" 
               value={formData.lastName} 
               onChange={handleChange} 
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+              className="appearance-none block w-full bg-[#e1f9e1] text-gray-700 border border-[#1adb5d] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-[#149c47]" 
               required 
             />
           </div>
@@ -66,7 +66,7 @@ const PatientForm = () => {
               name="dob" 
               value={formData.dob} 
               onChange={handleChange} 
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+              className="appearance-none block w-full bg-[#e1f9e1] text-gray-700 border border-[#1adb5d] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-[#149c47]" 
               required 
             />
           </div>
@@ -79,7 +79,7 @@ const PatientForm = () => {
               name="gender" 
               value={formData.gender} 
               onChange={handleChange} 
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              className="appearance-none block w-full bg-[#e1f9e1] text-gray-700 border border-[#1adb5d] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-[#149c47]"
             >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
@@ -99,7 +99,7 @@ const PatientForm = () => {
               name="phone" 
               value={formData.phone} 
               onChange={handleChange} 
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+              className="appearance-none block w-full bg-[#e1f9e1] text-gray-700 border border-[#1adb5d] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-[#149c47]" 
               required 
             />
           </div>
@@ -113,7 +113,7 @@ const PatientForm = () => {
               name="email" 
               value={formData.email} 
               onChange={handleChange} 
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+              className="appearance-none block w-full bg-[#e1f9e1] text-gray-700 border border-[#1adb5d] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-[#149c47]" 
               required 
             />
           </div>
@@ -128,7 +128,7 @@ const PatientForm = () => {
               name="preferredTime" 
               value={formData.preferredTime} 
               onChange={handleChange} 
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              className="appearance-none block w-full bg-[#e1f9e1] text-gray-700 border border-[#1adb5d] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-[#149c47]"
             >
               <option value="">Select Time</option>
               <option value="morning">Morning</option>
@@ -141,7 +141,7 @@ const PatientForm = () => {
         <div className="mt-6 flex justify-center">
           <button 
             type="submit" 
-            className="bg-blue-500 text-white px-10 py-2 rounded-md hover:bg-blue-600"
+            className="bg-[#1adb5d] text-white px-10 py-2 rounded-md hover:bg-[#149c47]"
           >
             Add Patient
           </button>
