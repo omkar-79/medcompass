@@ -47,11 +47,11 @@ def insert_patient(patient: Patient):
     return insert_one(COLLECTION_NAME, patient_dict)
 
 
-def get_patient_by_id(patient_id):
+def get_patient_by_patient_id(patient_id: str):
     """
-    Retrieves a patient using MongoDB _id.
+    Retrieves a patient document by custom 6-digit patient_id.
     """
-    return find_one(COLLECTION_NAME, {"_id": ObjectId(patient_id)})
+    return find_one(COLLECTION_NAME, {"patient_id": patient_id})
 
 
 def get_all_patients():

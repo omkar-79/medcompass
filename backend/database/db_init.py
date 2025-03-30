@@ -12,7 +12,7 @@ def drop_collections(collections):
             db[name].drop()
             print(f"Dropped existing collection: {name}")
         else:
-            print(f"ℹ️ Collection '{name}' does not exist, skipping drop.")
+            print(f"Collection '{name}' does not exist, skipping drop.")
 
 
 def create_collection_with_schema(name, schema):
@@ -24,9 +24,9 @@ def create_collection_with_schema(name, schema):
         db.create_collection(
             name, validator={"$jsonSchema": schema}, validationLevel="strict"
         )
-        print(f"✅ Created collection '{name}' with schema validation")
+        print(f"Created collection '{name}' with schema validation")
     except CollectionInvalid:
-        print(f"❌ Failed to create collection '{name}'")
+        print(f"Failed to create collection '{name}'")
 
 
 def init_patients():
@@ -106,6 +106,18 @@ def init_discharge_calls():
     create_collection_with_schema("post_discharge_calls", schema)
 
 
+def init_questions():
+    schema = {
+        "bsonType": "object",
+        "required": ["category", "questions"],
+        "properties": {
+            "category": {"bsonType": "string"},
+            "questions": {"bsonType": "array", "items": {"bsonType": "string"}},
+        },
+    }
+    create_collection_with_schema("questions", schema)
+
+
 def ensure_indexes():
     """
     Create unique indexes on ID fields.
@@ -115,6 +127,7 @@ def ensure_indexes():
     get_collection("post_discharge_calls").create_index(
         "discharge_call_id", unique=True
     )
+    get_collection("questions").create_index("category", unique=True)
 
 
 def run_all():
@@ -123,6 +136,7 @@ def run_all():
         "medical_data",
         "hospitalizations",
         "post_discharge_calls",
+        "questions",
     ]
 
     drop_collections(collections)
@@ -130,6 +144,7 @@ def run_all():
     init_medical_data()
     init_hospitalizations()
     init_discharge_calls()
+    init_questions()
     ensure_indexes()
 
 
