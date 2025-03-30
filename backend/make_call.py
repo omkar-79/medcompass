@@ -1,7 +1,4 @@
 import os
-import sched
-import time
-from datetime import datetime
 from twilio.rest import Client
 from dotenv import load_dotenv
 
@@ -12,40 +9,19 @@ load_dotenv()
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
-PUBLIC_SERVER_URL = os.getenv("PUBLIC_SERVER_URL")
-
-# List of call schedules (datetime format: "YYYY-MM-DD HH:MM")
-call_schedule = [
-    {"patient_number": "+18043977703", "time": "2025-03-30 01:34"},
-    {"patient_number": "+18043977703", "time": "2025-03-30 14:36"},
-]
+PATIENT_PHONE_NUMBER = os.getenv("PATIENT_PHONE_NUMBER")
 
 # Initialize Twilio Client
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-# Initialize Scheduler
-scheduler = sched.scheduler(time.time, time.sleep)
-
 # Function to initiate a call
-def make_call(patient_number):
+def make_call():
     call = client.calls.create(
-        to=patient_number,
+        to=PATIENT_PHONE_NUMBER,
         from_=TWILIO_PHONE_NUMBER,
-        url=f"{PUBLIC_SERVER_URL}/voice"
+        url="https://de46-192-112-253-19.ngrok-free.app/voice"  # Replace with your actual public server URL
     )
-    print(f"Call made to {patient_number} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Call SID: {call.sid}")
-
-# Function to schedule calls
-def schedule_calls():
-    for entry in call_schedule:
-        call_time = datetime.strptime(entry["time"], "%Y-%m-%d %H:%M")
-        delay = (call_time - datetime.now()).total_seconds()
-        
-        if delay > 0:
-            scheduler.enter(delay, 1, make_call, argument=(entry["patient_number"],))
-            print(f"Scheduled call to {entry['patient_number']} at {call_time}")
-
-    scheduler.run()
+    print(f"Call initiated: {call.sid}")
 
 if __name__ == "__main__":
-    schedule_calls()
+    make_call()

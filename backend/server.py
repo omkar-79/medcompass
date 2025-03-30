@@ -6,9 +6,6 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Get public server URL from environment variable
-PUBLIC_SERVER_URL = os.getenv("PUBLIC_SERVER_URL")
-
 app = Flask(__name__)
 
 # List of predefined questions
@@ -17,20 +14,9 @@ questions = [
     "Are you experiencing any pain or discomfort?",
     "Have you taken your prescribed medication today?"
 ]
+
 # Store call states
 call_sessions = {}
-
-def is_question(response):
-    """Simple heuristic to check if the response is a question."""
-    question_words = {"who", "what", "where", "when", "why", "how", "is", "can", "does", "do", "are", "could", "would", "should"}
-    
-    # Convert response to lowercase for case-insensitive matching
-    words = response.lower().strip().split()
-
-    # Check if the first word is a question word or if the response ends with "?"
-    if words and (words[0] in question_words or response.strip().endswith("?")):
-        return True
-    return False
 
 @app.route("/voice", methods=["POST"])
 def voice():
@@ -90,14 +76,14 @@ def ask_question(call_sid=None):
         gather.say(questions[index])
         response.append(gather)
         response.say("We did not receive any input. Goodbye!")
-    else:    
-        response.say("Thank you for your responses. Have a great day! 2")
+    else:
+        response.say("Thank you for your responses. Have a great day!")
     
     return str(response)
 
 @app.route("/record-answer", methods=["POST"])
 def record_answer():
-    """Records the answer and proceeds to the next question or handles patient questions."""
+    """Records the answer and proceeds to the next question."""
     response = VoiceResponse()
     call_sid = request.form.get("CallSid")
     
@@ -112,22 +98,9 @@ def record_answer():
     print(f"Q{index+1}: {questions[index]}")
     print(f"Answer: {answer}")
 
-    # Check if the answer is a question
-    user_queries = is_question(answer)
-    if user_queries:
-        print("User asked a question")
-        response.say("Your question has been noted. We will get back to you soon.")
-    else:
-        session["question_index"] += 1  # Move to the next question
+    session["question_index"] += 1  # Move to the next question
 
-    if session["question_index"] < len(questions):
-        return ask_question(call_sid)  # Ask the next question
-    else:
-        if user_queries:
-            response.say("Your questions and queries have been noted. Your healthcare provider will address them as soon as they can. Thank you for your responses, have a great day!")
-        else:
-            response.say("Thank you for your responses. Have a great day! 1")
-        return str(response)
+    return ask_question(call_sid)  # Ask next question
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
