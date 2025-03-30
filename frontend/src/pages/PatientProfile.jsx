@@ -116,6 +116,50 @@ const PatientProfile = () => {
     }
   }, [patientId]);
 
+  useEffect(() => {
+    const fetchCallSchedule = async () => {
+      try {
+        if (!hospitalizations.length) {
+          setCallSchedule([]);
+          return;
+        }
+
+        const hospitalizationIds = hospitalizations.map(h => h.id);
+        
+        const response = await fetch('http://localhost:5003/api/discharge-calls/search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ hospitalizationIds })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch call schedule');
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+          setCallSchedule(result.calls.map(call => ({
+            id: call.call_report_id,
+            hospitalizationId: call.hospitalization_id,
+            callDate: call.call_date,
+            category: call.category,
+            questions: call.category.split(', '),
+            called: call.call_status,
+            response: call.response
+          })));
+        }
+      } catch (err) {
+        console.error('Error fetching call schedule:', err);
+        setError('Failed to fetch call schedule');
+      }
+    };
+
+    fetchCallSchedule();
+  }, [hospitalizations]);
+
   const handleAdmission = async (e) => {
     e.preventDefault();
     
@@ -226,10 +270,125 @@ const PatientProfile = () => {
     }
   };
 
-  const handleCallStatusUpdate = (callId, newStatus) => {
-    setCallSchedule(callSchedule.map(call => 
-      call.id === callId ? { ...call, called: newStatus } : call
-    ));
+  const handleCallStatusUpdate = async (callId, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:5003/api/discharge-calls/${callId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          call_status: newStatus,
+          response: '' // Maintain empty response when just updating status
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update call status');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // Update local state only after successful backend update
+        setCallSchedule(callSchedule.map(call => 
+          call.id === callId 
+            ? { 
+                ...call, 
+                called: result.call.call_status,
+                response: result.call.response
+              } 
+            : call
+        ));
+      }
+    } catch (err) {
+      console.error('Error updating call status:', err);
+      setError('Failed to update call status');
+    }
+  };
+
+  const handleViewReport = async (callReportId) => {
+    try {
+      const response = await fetch(`http://localhost:5003/api/discharge-calls/report/${callReportId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch call report');
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        const call = result.call;
+        const hosp = hospitalizations.find(h => h.id === call.hospitalization_id);
+        
+        // You can show this information in a modal or alert for now
+        alert(`
+          Report ID: ${call.call_report_id}
+          Hospitalization: ${hosp ? `${hosp.diagnosis} (${hosp.admitDate})` : 'N/A'}
+          Call Date: ${call.call_date}
+          Status: ${call.call_status ? 'Completed' : 'Pending'}
+          Questions: ${call.category}
+          Response: ${call.response || 'No response recorded'}
+        `);
+      }
+    } catch (err) {
+      console.error('Error fetching call report:', err);
+      setError('Failed to fetch call report');
+    }
+  };
+
+  const handleScheduleCall = async (e) => {
+    e.preventDefault();
+    try {
+      if (!newCall.hospitalizationId || !newCall.callDate || newCall.questions.length === 0) {
+        setError('Please fill in all required fields');
+        return;
+      }
+
+      const response = await fetch('http://localhost:5003/api/discharge-calls', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hospitalization_id: newCall.hospitalizationId.toString(), // Convert to string as per schema
+          call_date: newCall.callDate,
+          category: newCall.questions.join(', '), // Join questions into a single string
+          call_status: false, // Initial status is always false
+          response: '' // Initial empty response
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to schedule call');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // Add new call to the schedule with the generated call_report_id
+        setCallSchedule(prev => [...prev, {
+          id: result.call.call_report_id,
+          hospitalizationId: result.call.hospitalization_id,
+          callDate: result.call.call_date,
+          category: result.call.category,
+          questions: result.call.category.split(', '), // Split back into array for display
+          called: result.call.call_status,
+          response: result.call.response
+        }]);
+
+        // Reset form
+        setNewCall({
+          hospitalizationId: '',
+          callDate: '',
+          questions: [],
+          called: false
+        });
+
+        setError(null);
+      }
+    } catch (err) {
+      console.error('Error scheduling call:', err);
+      setError(err.message || 'Failed to schedule call');
+    }
   };
 
   const activeHospitalizations = hospitalizations.filter(h => !h.dischargeDate);
@@ -311,6 +470,7 @@ const PatientProfile = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#20cc5c] text-white sticky top-0 z-10">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">ID</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Diagnosis</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Allergies</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Admit Date</th>
@@ -322,6 +482,7 @@ const PatientProfile = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {hospitalizations.map((entry) => (
                   <tr key={entry.id} className="odd:bg-white even:bg-[#e1f9e1] hover:bg-[#b2f5b2]">
+                    <td className="px-6 py-4 text-sm text-gray-800">{entry.id}</td>
                     <td className="px-6 py-4 whitespace-normal text-sm text-gray-800">{entry.diagnosis}</td>
                     <td className="px-6 py-4 whitespace-normal text-sm text-gray-800">{entry.allergies}</td>
                     <td className="px-6 py-4 text-sm text-gray-800">{entry.admitDate}</td>
@@ -333,6 +494,7 @@ const PatientProfile = () => {
               </tbody>
             </table>
           </div>
+  
 
           {/* Admission Form */}
           <form onSubmit={handleAdmission} className="mt-8 space-y-4 border-t pt-6">
@@ -472,10 +634,12 @@ const PatientProfile = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#20cc5c] text-white sticky top-0 z-10">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Report ID</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Call Date</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Hospitalization</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Questions</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -483,6 +647,7 @@ const PatientProfile = () => {
                   const hosp = hospitalizations.find(h => h.id === call.hospitalizationId);
                   return (
                     <tr key={call.id} className="odd:bg-white even:bg-[#e1f9e1] hover:bg-[#b2f5b2]">
+                      <td className="px-6 py-4 text-sm text-gray-800">{call.id}</td>
                       <td className="px-6 py-4 text-sm text-gray-800">{call.callDate}</td>
                       <td className="px-6 py-4 whitespace-normal text-sm text-gray-800">
                         {hosp ? `${hosp.admitDate} - ${hosp.diagnosis}` : 'N/A'}
@@ -504,29 +669,24 @@ const PatientProfile = () => {
                           {call.called ? 'Completed' : 'Pending'}
                         </button>
                       </td>
+                      <td className="px-6 py-4 text-sm">
+                        <button
+                          onClick={() => handleViewReport(call.id)}
+                          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-xs font-medium"
+                        >
+                          View Report
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
-        </div>
+          </div>
 
 
           {/* Schedule New Call Form */}
-          <form onSubmit={(e) => {
-              e.preventDefault();
-              const newSchedule = {
-                ...newCall,
-                id: Date.now()
-              };
-              setCallSchedule([...callSchedule, newSchedule]);
-              setNewCall({
-                hospitalizationId: "",
-                callDate: "",
-                questions: [],
-                called: false
-              });
-            }} className="space-y-4">
+          <form onSubmit={handleScheduleCall} className="space-y-4">
               <h3 className="text-xl font-medium text-gray-700 mb-4">Schedule New Call</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
@@ -535,7 +695,7 @@ const PatientProfile = () => {
                     value={newCall.hospitalizationId}
                     onChange={(e) => setNewCall({
                       ...newCall,
-                      hospitalizationId: parseInt(e.target.value)
+                      hospitalizationId: e.target.value // Don't use parseInt since we need string
                     })}
                     className="w-full px-4 py-2 border border-[#1adb5d] bg-[#e1f9e1] text-gray-700 rounded-lg focus:ring-2 focus:ring-[#1adb5d] focus:border-[#149c47]"
                     required
@@ -579,21 +739,6 @@ const PatientProfile = () => {
                       </option>
                     ))}
                   </select>
-                  <p className="text-sm text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple questions</p>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={newCall.called}
-                      onChange={(e) => setNewCall({
-                        ...newCall,
-                        called: e.target.checked
-                      })}
-                      className="rounded border-[#1adb5d] text-[#1adb5d] focus:ring-[#149c47]"
-                    />
-                    <span className="text-sm font-medium text-gray-700">Call Completed</span>
-                  </label>
                 </div>
               </div>
               <div className="flex justify-end">

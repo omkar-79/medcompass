@@ -32,6 +32,11 @@ const MedicalData = mongoose.model('medical_data', new mongoose.Schema({}, {
   collection: 'medical_data' 
 }));
 
+const DischargeCall = mongoose.model('post_discharge_calls', new mongoose.Schema({}, { 
+  strict: false,
+  collection: 'post_discharge_calls' 
+}));
+
 // API endpoint to add a new patient
 app.post('/api/patients', async (req, res) => {
   try {
@@ -160,6 +165,122 @@ app.put('/api/medical/:hospitalizationId', async (req, res) => {
   } catch (error) {
     console.error('Error updating medical record:', error);
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Schedule new discharge call
+app.post('/api/discharge-calls', async (req, res) => {
+  try {
+    // Generate unique call report ID
+    const count = await DischargeCall.countDocuments();
+    const callReportId = `R${(count + 1).toString().padStart(4, '0')}`;
+
+    const call = new DischargeCall({
+      call_report_id: callReportId,
+      hospitalization_id: req.body.hospitalization_id,
+      call_date: req.body.call_date,
+      call_status: false, // Initially set to false (pending)
+      category: req.body.category,
+      response: req.body.response || ''
+    });
+
+    await call.save();
+    res.status(201).json({ success: true, call });
+  } catch (error) {
+    console.error('Error scheduling call:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get calls for a specific hospitalization
+app.get('/api/discharge-calls/:hospitalizationId', async (req, res) => {
+  try {
+    const calls = await DischargeCall.find({ 
+      hospitalization_id: req.params.hospitalizationId 
+    });
+    res.status(200).json({ success: true, calls });
+  } catch (error) {
+    console.error('Error fetching calls:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Update call status
+app.put('/api/discharge-calls/:callReportId', async (req, res) => {
+  try {
+    const call = await DischargeCall.findOneAndUpdate(
+      { call_report_id: req.params.callReportId },
+      { 
+        $set: { 
+          call_status: req.body.call_status,
+          response: req.body.response || ''
+        } 
+      },
+      { new: true }
+    );
+
+    if (!call) {
+      return res.status(404).json({
+        success: false,
+        message: 'Call record not found'
+      });
+    }
+
+    res.status(200).json({ success: true, call });
+  } catch (error) {
+    console.error('Error updating call status:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get specific call report
+app.get('/api/discharge-calls/report/:callReportId', async (req, res) => {
+  try {
+    const call = await DischargeCall.findOne({ 
+      call_report_id: req.params.callReportId 
+    });
+    
+    if (!call) {
+      return res.status(404).json({
+        success: false,
+        message: 'Call report not found'
+      });
+    }
+
+    res.status(200).json({ success: true, call });
+  } catch (error) {
+    console.error('Error fetching call report:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Add this endpoint for searching calls by hospitalization IDs
+app.post('/api/discharge-calls/search', async (req, res) => {
+  try {
+    const { hospitalizationIds } = req.body;
+    
+    if (!Array.isArray(hospitalizationIds) || hospitalizationIds.length === 0) {
+      return res.status(200).json({
+        success: true,
+        calls: [],
+        message: 'No hospitalizations provided'
+      });
+    }
+
+    const calls = await DischargeCall.find({
+      hospitalization_id: { $in: hospitalizationIds }
+    }).sort({ call_date: -1 });
+
+    res.status(200).json({
+      success: true,
+      calls: calls || []
+    });
+  } catch (error) {
+    console.error('Error searching calls:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 });
 
