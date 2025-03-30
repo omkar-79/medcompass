@@ -1,10 +1,6 @@
 from datetime import datetime
 from backend.database.models.patient_model import Patient, insert_patient
 from backend.database.models.medical_model import MedicalData, insert_medical_data
-from backend.database.models.hospitalization_model import (
-    Hospitalization,
-    insert_hospitalization,
-)
 from backend.database.models.discharge_call_model import (
     DischargeCall,
     insert_discharge_call,
@@ -22,46 +18,43 @@ def test_insert_flow():
 
     # Insert Patient
     patient = Patient(
-        name="Test User",
-        dob=datetime(1990, 1, 1),
+        first_name="Test",
+        last_name="User",
+        dob="01011990",  # MMDDYYYY
         phone="+10000000000",
         gender="Other",
-        language="English",
         email="testuser@example.com",
         address="456 Test Blvd",
         preferred_call_time="Morning",
     )
     patient_insert_result = insert_patient(patient)
-
     patient_doc = get_collection("patients").find_one({"_id": patient_insert_result})
     patient_id = patient_doc["patient_id"]
     print(f"Inserted patient with patient_id: {patient_id}")
 
-    # Insert Medical Data
+    # Insert Medical Data (includes hospitalization info)
     medical = MedicalData(
-        patient_id=patient_id, diseases=["TestDisease"], allergies=["TestAllergy"]
-    )
-    insert_medical_data(medical)
-    print(f"Inserted medical data for patient_id: {patient_id}")
-
-    # Insert Hospitalization
-    hospitalization = Hospitalization(
         patient_id=patient_id,
-        date=datetime(2024, 4, 1),
-        reason="Test Procedure",
-        follow_up_call_date=datetime(2024, 4, 15),
+        diagnosis="Hypertension",
+        allergies="Penicillin",
+        admit_date="03282024",
+        discharge_instructions="Take meds daily. Follow diet.",
+        follow_up_app_date="04102024",
     )
-    hosp_insert_result = insert_hospitalization(hospitalization)
+    medical_insert_result = insert_medical_data(medical)
+    medical_doc = get_collection("medical_data").find_one(
+        {"_id": medical_insert_result}
+    )
+    hospitalization_id = medical_doc["hospitalization_id"]
+    print(f"Inserted medical record with hospitalization_id: {hospitalization_id}")
 
-    hosp_doc = get_collection("hospitalizations").find_one({"_id": hosp_insert_result})
-    hospitalization_id = hosp_doc["hospitalization_id"]
-    print(f"Inserted hospitalization with ID: {hospitalization_id}")
-
-    # Insert Discharge Call
+    # Insert Discharge Call (linked to hospitalization_id)
     discharge = DischargeCall(
         hospitalization_id=hospitalization_id,
-        call_date=datetime(2024, 4, 20),
-        called=False,
+        call_date="04202024",
+        call_status=True,
+        category="Cardiovascular Conditions",
+        response=["Yes", "No", "Sometimes"],
     )
     insert_discharge_call(discharge)
     print(f"Inserted discharge call for hospitalization_id: {hospitalization_id}")
@@ -78,7 +71,7 @@ def test_insert_flow():
     insert_question_category(question_category)
     print(f"Inserted question category: {question_category.category}")
 
-    # Retrieve Questions
+    # Retrieve and Print Questions
     fetched_questions = get_questions_by_category("Cardiovascular Conditions")
     print(f"Retrieved questions for category: {fetched_questions['category']}")
     for q in fetched_questions["questions"]:

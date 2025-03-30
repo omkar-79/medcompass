@@ -1,19 +1,18 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from typing import Optional
 import random
-
 from backend.database.server import insert_one, find_one, find_all, get_collection
 
 COLLECTION_NAME = "patients"
 
 
 class Patient(BaseModel):
-    patient_id: str = None
-    name: str
-    dob: datetime
+    patient_id: Optional[str] = None
+    first_name: str
+    last_name: str
+    dob: str
     phone: str
     gender: str
-    language: str
     email: EmailStr
     address: str
     preferred_call_time: str
@@ -24,23 +23,24 @@ class Patient(BaseModel):
 
 def generate_unique_patient_id():
     """
-    Generate a unique 6-digit patient ID that does not exist in the collection.
+    Generates a unique patient_id.
     """
     patients_col = get_collection(COLLECTION_NAME)
-    while True:
-        new_id = str(random.randint(100000, 999999))
-        if not patients_col.find_one({"patient_id": new_id}):
-            return new_id
+    last_patient = patients_col.find_one({}, sort=[("patient_id", -1)])
+    if last_patient and "patient_id" in last_patient:
+        last_number = int(last_patient["patient_id"][1:])
+    else:
+        last_number = 0
+    new_number = last_number + 1
+    return f"P{new_number:04d}"
 
 
 def insert_patient(patient: Patient):
     """
-    Inserts a new patient document into the 'patients' collection.
-    Automatically generates a unique 6-digit patient_id if not provided.
+    Inserts a new patient document. Auto-generates patient_id if not provided.
     """
     patient_dict = patient.dict()
 
-    # Generate patient_id if not provided
     if not patient_dict.get("patient_id"):
         patient_dict["patient_id"] = generate_unique_patient_id()
 
@@ -48,14 +48,8 @@ def insert_patient(patient: Patient):
 
 
 def get_patient_by_patient_id(patient_id: str):
-    """
-    Retrieves a patient document by custom 6-digit patient_id.
-    """
     return find_one(COLLECTION_NAME, {"patient_id": patient_id})
 
 
 def get_all_patients():
-    """
-    Retrieves all patient documents from the 'patients' collection.
-    """
     return find_all(COLLECTION_NAME)

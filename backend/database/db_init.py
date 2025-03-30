@@ -34,22 +34,22 @@ def init_patients():
         "bsonType": "object",
         "required": [
             "patient_id",
-            "name",
+            "first_name",
+            "last_name",
             "dob",
             "phone",
             "gender",
-            "language",
             "email",
             "address",
             "preferred_call_time",
         ],
         "properties": {
             "patient_id": {"bsonType": "string"},
-            "name": {"bsonType": "string"},
-            "dob": {"bsonType": "date"},
+            "first_name": {"bsonType": "string"},
+            "last_name": {"bsonType": "string"},
+            "dob": {"bsonType": "string"},
             "phone": {"bsonType": "string"},
             "gender": {"bsonType": "string"},
-            "language": {"bsonType": "string"},
             "email": {"bsonType": "string"},
             "address": {"bsonType": "string"},
             "preferred_call_time": {"bsonType": "string"},
@@ -61,46 +61,49 @@ def init_patients():
 def init_medical_data():
     schema = {
         "bsonType": "object",
-        "required": ["patient_id", "diseases", "allergies"],
+        "required": [
+            "patient_id",
+            "diagnosis",
+            "allergies",
+            "hospitalization_id",
+            "admit_date",
+            "discharge_instructions",
+            "follow_up_app_date",
+        ],
         "properties": {
             "patient_id": {"bsonType": "string"},
-            "diseases": {"bsonType": "array", "items": {"bsonType": "string"}},
-            "allergies": {"bsonType": "array", "items": {"bsonType": "string"}},
+            "diagnosis": {"bsonType": "string"},
+            "allergies": {"bsonType": "string"},
+            "hospitalization_id": {"bsonType": "string"},
+            "admit_date": {"bsonType": "string"},
+            "discharge_instructions": {"bsonType": "string"},
+            "follow_up_app_date": {"bsonType": "string"},
         },
     }
     create_collection_with_schema("medical_data", schema)
 
 
-def init_hospitalizations():
-    schema = {
-        "bsonType": "object",
-        "required": [
-            "hospitalization_id",
-            "patient_id",
-            "date",
-            "reason",
-            "follow_up_call_date",
-        ],
-        "properties": {
-            "hospitalization_id": {"bsonType": "string"},
-            "patient_id": {"bsonType": "string"},
-            "date": {"bsonType": "date"},
-            "reason": {"bsonType": "string"},
-            "follow_up_call_date": {"bsonType": "date"},
-        },
-    }
-    create_collection_with_schema("hospitalizations", schema)
-
-
 def init_discharge_calls():
     schema = {
         "bsonType": "object",
-        "required": ["discharge_call_id", "hospitalization_id", "call_date", "called"],
+        "required": [
+            "call_report_id",
+            "hospitalization_id",
+            "call_date",
+            "call_status",
+            "category",
+            "response",
+        ],
         "properties": {
-            "discharge_call_id": {"bsonType": "string"},
+            "call_report_id": {"bsonType": "string"},
             "hospitalization_id": {"bsonType": "string"},
-            "call_date": {"bsonType": "date"},
-            "called": {"bsonType": "bool"},
+            "call_date": {"bsonType": "string"},
+            "call_status": {"bsonType": "bool"},
+            "category": {"bsonType": "string"},
+            "response": {
+                "bsonType": "array",
+                "items": {"bsonType": "string"},
+            },
         },
     }
     create_collection_with_schema("post_discharge_calls", schema)
@@ -124,9 +127,7 @@ def ensure_indexes():
     """
     get_collection("patients").create_index("patient_id", unique=True)
     get_collection("hospitalizations").create_index("hospitalization_id", unique=True)
-    get_collection("post_discharge_calls").create_index(
-        "discharge_call_id", unique=True
-    )
+    get_collection("post_discharge_calls").create_index("call_report_id", unique=True)
     get_collection("questions").create_index("category", unique=True)
 
 
@@ -142,7 +143,6 @@ def run_all():
     drop_collections(collections)
     init_patients()
     init_medical_data()
-    init_hospitalizations()
     init_discharge_calls()
     init_questions()
     ensure_indexes()

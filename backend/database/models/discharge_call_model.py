@@ -1,50 +1,54 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
-import random
+from typing import Optional, List
+import re
 from backend.database.server import insert_one, find_one, find_all, get_collection
 
 COLLECTION_NAME = "post_discharge_calls"
 
 
 class DischargeCall(BaseModel):
-    discharge_call_id: Optional[str] = None
+    call_report_id: Optional[str] = None
     hospitalization_id: str
-    call_date: datetime
-    called: bool
+    call_date: str
+    call_status: bool
+    category: str
+    response: List[str]
 
     class Config:
         arbitrary_types_allowed = True
 
 
-def generate_unique_discharge_call_id():
+def generate_unique_call_report_id():
     """
-    Generate a unique 6-digit discharge_call_id.
+    Generate a unique call_report_id in the format R0001, R0002, etc.
     """
     col = get_collection(COLLECTION_NAME)
-    while True:
-        new_id = str(random.randint(100000, 999999))
-        if not col.find_one({"discharge_call_id": new_id}):
-            return new_id
+    last = col.find_one({}, sort=[("call_report_id", -1)])
+    if last and "call_report_id" in last:
+        last_number = int(re.sub(r"\D", "", last["call_report_id"]))
+    else:
+        last_number = 0
+    return f"R{last_number + 1:04d}"
 
 
 def insert_discharge_call(discharge: DischargeCall):
     """
-    Inserts a post-discharge call record with a unique discharge_call_id.
+    Inserts a post-discharge call record with a unique call_report_id.
     """
     document = discharge.dict()
 
-    if not document.get("discharge_call_id"):
-        document["discharge_call_id"] = generate_unique_discharge_call_id()
+    if not document.get("call_report_id"):
+        document["call_report_id"] = generate_unique_call_report_id()
 
     return insert_one(COLLECTION_NAME, document)
 
 
-def get_discharge_call_by_id(discharge_call_id: str):
+def get_discharge_call_by_id(call_report_id: str):
     """
-    Retrieves a discharge call record by its unique discharge_call_id.
+    Retrieves a discharge call record by its unique call_report_id.
     """
-    return find_one(COLLECTION_NAME, {"discharge_call_id": discharge_call_id})
+    return find_one(COLLECTION_NAME, {"call_report_id": call_report_id})
 
 
 def get_all_discharge_calls():
