@@ -13,7 +13,7 @@ class DischargeCall(BaseModel):
     call_date: str
     call_status: bool
     category: str
-    response: List[str]
+    response: str
 
     class Config:
         arbitrary_types_allowed = True
