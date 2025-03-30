@@ -50,11 +50,12 @@ const PatientProfile = () => {
   });
 
   const questionOptions = [
-    { value: "pain", label: "Pain Assessment" },
-    { value: "medication", label: "Medication Adherence" },
-    { value: "symptoms", label: "New Symptoms" },
-    { value: "followup", label: "Follow-up Appointments" },
-    { value: "activity", label: "Daily Activities" }
+    { value: "neuro", label: "Neurological Conditions" },
+    { value: "cancer", label: "Cancer" },
+    { value: "respiratory", label: "Respiratory Conditions" },
+    { value: "general_surgery", label: "General Surgery" },
+    { value: "diabetes", label: "Diabetes" },
+    { value: "cardio", label: "Cardiovascular Conditions" }
   ];
 
   useEffect(() => {
