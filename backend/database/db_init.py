@@ -123,7 +123,7 @@ def ensure_indexes():
     Create unique indexes on ID fields.
     """
     get_collection("patients").create_index("patient_id", unique=True)
-    get_collection("hospitalizations").create_index("hospitalization_id", unique=True)
+    get_collection("medical_data").create_index("hospitalization_id", unique=True)
     get_collection("post_discharge_calls").create_index("call_report_id", unique=True)
     get_collection("questions").create_index("category", unique=True)
 
