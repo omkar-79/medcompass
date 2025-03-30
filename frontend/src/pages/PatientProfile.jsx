@@ -44,6 +44,7 @@ const PatientProfile = () => {
   const [newCall, setNewCall] = useState({
     hospitalizationId: "",
     callDate: "",
+    callTime: "", // Add this new field
     questions: [],
     called: false
   });
@@ -339,10 +340,13 @@ const PatientProfile = () => {
   const handleScheduleCall = async (e) => {
     e.preventDefault();
     try {
-      if (!newCall.hospitalizationId || !newCall.callDate || newCall.questions.length === 0) {
+      if (!newCall.hospitalizationId || !newCall.callDate || !newCall.callTime || newCall.questions.length === 0) {
         setError('Please fill in all required fields');
         return;
       }
+
+      // Combine date and time in the required format
+      const combinedDateTime = `${newCall.callDate} ${newCall.callTime}`;
 
       const response = await fetch('http://localhost:5003/api/discharge-calls', {
         method: 'POST',
@@ -350,11 +354,11 @@ const PatientProfile = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          hospitalization_id: newCall.hospitalizationId.toString(), // Convert to string as per schema
-          call_date: newCall.callDate,
-          category: newCall.questions.join(', '), // Join questions into a single string
-          call_status: false, // Initial status is always false
-          response: '' // Initial empty response
+          hospitalization_id: newCall.hospitalizationId,
+          call_date: combinedDateTime, // Send combined date and time
+          category: newCall.questions.join(', '),
+          call_status: false,
+          response: ''
         })
       });
 
@@ -380,6 +384,7 @@ const PatientProfile = () => {
         setNewCall({
           hospitalizationId: '',
           callDate: '',
+          callTime: '', // Reset time as well
           questions: [],
           called: false
         });
@@ -719,6 +724,19 @@ const PatientProfile = () => {
                     onChange={(e) => setNewCall({
                       ...newCall,
                       callDate: e.target.value
+                    })}
+                    className="w-full px-4 py-2 border border-[#1adb5d] bg-[#e1f9e1] text-gray-700 rounded-lg focus:ring-2 focus:ring-[#1adb5d] focus:border-[#149c47]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Call Time (24-hour)</label>
+                  <input
+                    type="time"
+                    value={newCall.callTime}
+                    onChange={(e) => setNewCall({
+                      ...newCall,
+                      callTime: e.target.value
                     })}
                     className="w-full px-4 py-2 border border-[#1adb5d] bg-[#e1f9e1] text-gray-700 rounded-lg focus:ring-2 focus:ring-[#1adb5d] focus:border-[#149c47]"
                     required
