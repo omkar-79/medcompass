@@ -432,37 +432,37 @@ const PatientProfile = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                <div className="text-lg text-gray-700 p-2 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
+                <div className="text-sm text-gray-700 p-3 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
                   {patientData.firstName}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                <div className="text-lg text-gray-700 p-2 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
+                <div className="text-sm text-gray-700 p-3 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
                   {patientData.lastName}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                <div className="text-lg text-gray-700 p-2 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
+                <div className="text-sm text-gray-700 p-3 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
                   {patientData.dateOfBirth}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                <div className="text-lg text-gray-700 p-2 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg capitalize">
+                <div className="text-sm text-gray-700 p-3 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg capitalize">
                   {patientData.gender}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                <div className="text-lg text-gray-700 p-2 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
+                <div className="text-sm text-gray-700 p-3 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
                   {patientData.phoneNumber}
                 </div>
             </div>
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-      <div className="text-lg text-gray-700 p-2 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
+      <div className="text-sm text-gray-700 p-3 bg-[#e1f9e1] border border-[#1adb5d] rounded-lg">
         {patientData.email}
       </div>
     </div>

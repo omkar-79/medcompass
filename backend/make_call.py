@@ -27,16 +27,17 @@ scheduler = sched.scheduler(time.time, time.sleep)
 
 # Call schedule (initial data)
 call_schedule = [
-    {'R0001': True, 'patient_number': '+18043977703', 'time': '2025-03-30 11:13'},
+    {'R0001': True, 'patient_number': '+18043977703', 'time': '2025-03-30 12:12'},
     {"patient_number": "+0987654321", "time": "2025-03-30 14:30"},
 ]
 
 # Function to initiate a call
-def make_call(patient_number):
+def make_call(entry):
     current_number = open("CALLREPORTID", "w")
-    current_number.write(patient_number)
+    current_number.write(str(entry))
+    patient_number = entry["patient_number"]
     call = client.calls.create(
-        to=patient_number,
+        to=entry["patient_number"],
         from_=TWILIO_PHONE_NUMBER,
         url=f"{PUBLIC_SERVER_URL}/voice"
     )
@@ -60,7 +61,8 @@ def schedule_calls():
         delay = (call_time - datetime.now()).total_seconds()
         
         if delay > 0:
-            scheduler.enter(delay, 1, make_call, argument=(entry["patient_number"],))
+            print(entry)
+            scheduler.enter(delay, 1, make_call, argument=(entry,))
             print(f"Scheduled call to {entry['patient_number']} at {call_time}")
 
     # Schedule periodic updates every 10 minutes

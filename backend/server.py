@@ -5,7 +5,7 @@ from twilio.twiml.voice_response import VoiceResponse, Gather
 from dotenv import load_dotenv
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from database.scripts.call_script import get_call_scripts
+from database.scripts.call_script import get_call_scripts, push_responses
 # Load environment variables
 load_dotenv()
 
@@ -23,6 +23,9 @@ questions = [
 "Do you have enough support at home to assist with your recovery?"
 ]
 
+conversation = ""
+call_report_id = ""
+
 def appendquestions(dynamic_questions):
     global questions
     questions = questions + dynamic_questions
@@ -33,12 +36,18 @@ call_sessions = {}
 @app.route("/voice", methods=["POST"])
 def voice():
     # print(request.headers)
-    current_number = open("CALLREPORTID", 'r')
-    current_number = current_number.read()
+    global conversation
+    global call_report_id
+    conversation = ""
+    current_patient = open("CALLREPORTID", 'r')
+    current_patient = eval(current_patient.read())
+    call_report_id = list(current_patient.keys())[0]
+    current_number = current_patient["patient_number"]
     dynamic_questions = get_call_scripts()
     for patient in dynamic_questions:
-        print(patient["patient_number"])
-        print(current_number)
+        # print(patient["patient_number"])
+        # print(current_number)
+        # print(call_report_id)
         if patient["patient_number"] == current_number:
             appendquestions(patient["questions"])
             print(questions)
@@ -82,6 +91,7 @@ def handle_reschedule():
 
 @app.route("/ask-question", methods=["POST"])
 def ask_question(call_sid=None):
+    global call_report_id
     """Asks the next question dynamically from the list."""
     response = VoiceResponse()
     call_sid = call_sid or request.form.get("CallSid")
@@ -100,11 +110,13 @@ def ask_question(call_sid=None):
         response.say("We did not receive any input. Goodbye!")
     else:
         response.say("Thank you for your responses. Have a great day!")
-    
+    push_responses(call_report_id, conversation)
+    print(conversation)
     return str(response)
 
 @app.route("/record-answer", methods=["POST"])
 def record_answer():
+    global conversation
     """Records the answer and proceeds to the next question."""
     response = VoiceResponse()
     call_sid = request.form.get("CallSid")
@@ -119,7 +131,7 @@ def record_answer():
     
     print(f"Q{index+1}: {questions[index]}")
     print(f"Answer: {answer}")
-
+    conversation += "Question: " + questions[index] + "\nAnswer: " + answer + "\n=-=-"
     session["question_index"] += 1  # Move to the next question
 
     return ask_question(call_sid)  # Ask next question
