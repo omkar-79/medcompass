@@ -27,14 +27,16 @@ scheduler = sched.scheduler(time.time, time.sleep)
 
 # Call schedule (initial data)
 call_schedule = [
-    {'R0001': True, 'patient_number': '+18043977703', 'time': '2025-03-30 12:12'},
-    {"patient_number": "+0987654321", "time": "2025-03-30 14:30"},
+    # {'R0001': True, 'patient_number': '+18043977703', 'time': '2025-03-30 13:41'},
+    # {"patient_number": "+0987654321", "time": "2025-03-30 14:30"},
 ]
 
 # Function to initiate a call
 def make_call(entry):
+    # print(entry)
     current_number = open("CALLREPORTID", "w")
     current_number.write(str(entry))
+    print(entry)
     patient_number = entry["patient_number"]
     call = client.calls.create(
         to=entry["patient_number"],
@@ -46,28 +48,30 @@ def make_call(entry):
 # Function to update call schedule (dummy function for now)
 def update_schedule():
     schedules = get_call_scripts()
-    # schedules = json.loads(schedules)
-    print(schedules)
+    # print(schedules)
     for patient in schedules:
+        # print(patient)
         call_schedule.append({patient["call_report_id"]:True, "patient_number":patient["patient_number"], "time":patient["time"]})
+        print(call_schedule)
     # Reschedule update task every 10 minutes
-    scheduler.enter(600, 1, update_schedule)
+    scheduler.enter(15, 1, update_schedule)
 
 # Function to schedule calls
 def schedule_calls():
     # Schedule initial calls
+    # print(call_schedule)
     for entry in call_schedule:
         call_time = datetime.strptime(entry["time"], "%Y-%m-%d %H:%M")
         delay = (call_time - datetime.now()).total_seconds()
         
         if delay > 0:
-            print(entry)
+            # print(entry)
             scheduler.enter(delay, 1, make_call, argument=(entry,))
             print(f"Scheduled call to {entry['patient_number']} at {call_time}")
 
     # Schedule periodic updates every 10 minutes
-    scheduler.enter(10, 1, update_schedule)
-    print("Updating schedule every 10 minutes.")
+    scheduler.enter(15, 1, update_schedule)
+    print("Updating schedule every 15 seconds.")
 
     # Start the scheduler
     scheduler.run()
