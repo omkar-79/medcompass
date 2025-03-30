@@ -14,6 +14,10 @@ export default defineConfig({
       config: true,
     },
 
+    server: {
+      allowedHosts: ['5b6e-192-112-253-23.ngrok-free.app'],
+    },
+
     manifest: {
       name: 'frontend',
       short_name: 'frontend',
