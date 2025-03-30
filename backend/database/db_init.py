@@ -100,10 +100,7 @@ def init_discharge_calls():
             "call_date": {"bsonType": "string"},
             "call_status": {"bsonType": "bool"},
             "category": {"bsonType": "string"},
-            "response": {
-                "bsonType": "array",
-                "items": {"bsonType": "string"},
-            },
+            "response": {"bsonType": "string"},
         },
     }
     create_collection_with_schema("post_discharge_calls", schema)
@@ -126,7 +123,7 @@ def ensure_indexes():
     Create unique indexes on ID fields.
     """
     get_collection("patients").create_index("patient_id", unique=True)
-    get_collection("hospitalizations").create_index("hospitalization_id", unique=True)
+    get_collection("medical_data").create_index("hospitalization_id", unique=True)
     get_collection("post_discharge_calls").create_index("call_report_id", unique=True)
     get_collection("questions").create_index("category", unique=True)
 
@@ -135,7 +132,6 @@ def run_all():
     collections = [
         "patients",
         "medical_data",
-        "hospitalizations",
         "post_discharge_calls",
         "questions",
     ]
