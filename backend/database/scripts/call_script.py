@@ -22,34 +22,33 @@ def get_call_scripts():
         patient_id = patient.get("patient_id")
         phone = patient.get("phone")
 
-        medical_doc = medical_col.find_one({"patient_id": patient_id})
-        if not medical_doc:
-            continue
-        hospitalization_id = medical_doc.get("hospitalization_id")
-        if not hospitalization_id:
-            continue
+        medical_docs = medical_col.find({"patient_id": patient_id})
 
-        discharge_doc = discharge_col.find_one(
-            {"hospitalization_id": hospitalization_id}
-        )
-        if not discharge_doc:
-            continue
+        for medical_doc in medical_docs:
+            hospitalization_id = medical_doc.get("hospitalization_id")
+            if not hospitalization_id:
+                continue
 
-        call_report_id = discharge_doc.get("call_report_id", "")
-        call_date = discharge_doc.get("call_date", "")
-        category = discharge_doc.get("category", "")
+            discharge_docs = discharge_col.find(
+                {"hospitalization_id": hospitalization_id}
+            )
 
-        question_doc = questions_col.find_one({"category": category})
-        questions = question_doc.get("questions", []) if question_doc else []
+            for discharge_doc in discharge_docs:
+                call_report_id = discharge_doc.get("call_report_id", "")
+                call_date = discharge_doc.get("call_date", "")
+                category = discharge_doc.get("category", "")
 
-        result.append(
-            {
-                "call_report_id": call_report_id,
-                "patient_number": phone,
-                "time": call_date,
-                "questions": questions,
-            }
-        )
+                question_doc = questions_col.find_one({"category": category})
+                questions = question_doc.get("questions", []) if question_doc else []
+
+                result.append(
+                    {
+                        "call_report_id": call_report_id,
+                        "patient_number": phone,
+                        "time": call_date,
+                        "questions": questions,
+                    }
+                )
 
     return result
 
@@ -70,14 +69,14 @@ def push_responses(call_report_id: str, response: str):
 
     discharge_col.update_one(
         {"call_report_id": call_report_id},
-        {"$set": {"response": response}},
+        {"$set": {"response": response, "call_status": True}},
     )
     print("Response pushed to the database.")
 
 
 # if __name__ == "__main__":
 #     call_script = get_call_scripts()
-#     print("📞 Call Script:")
+#     print("Call Script:")
 #     for entry in call_script:
 #         print(f"\nReport ID: {entry['call_report_id']}")
 #         print(f"Patient: {entry['patient_number']}")
@@ -86,4 +85,4 @@ def push_responses(call_report_id: str, response: str):
 #         for q in entry["questions"]:
 #             print(f" - {q}")
 
-#     push_responses("R0001", "Sample Response")
+# push_responses("R0001", "Sample Response")
