@@ -100,10 +100,7 @@ def init_discharge_calls():
             "call_date": {"bsonType": "string"},
             "call_status": {"bsonType": "bool"},
             "category": {"bsonType": "string"},
-            "response": {
-                "bsonType": "array",
-                "items": {"bsonType": "string"},
-            },
+            "response": {"bsonType": "string"},
         },
     }
     create_collection_with_schema("post_discharge_calls", schema)
@@ -135,7 +132,6 @@ def run_all():
     collections = [
         "patients",
         "medical_data",
-        "hospitalizations",
         "post_discharge_calls",
         "questions",
     ]

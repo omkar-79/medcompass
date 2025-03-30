@@ -54,7 +54,7 @@ def test_insert_flow():
         call_date="2025-03-30 02:00",
         call_status=True,
         category="Cardiovascular Conditions",
-        response=["Yes", "No", "Sometimes"],
+        response="Do you experience chest pain during physical activity?",
     )
     insert_discharge_call(discharge)
     print(f"Inserted discharge call for hospitalization_id: {hospitalization_id}")
