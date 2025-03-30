@@ -11,10 +11,10 @@ const Navbar = () => {
         <img src={logo} alt="Logo" className="w-72" />
       </div>
 
-      <div className="flex justify-end items-center space-x- px-10">
+      <div className="flex justify-end items-center space-x- px-10 gap-5">
         <Link
           to="/"
-          className="hover:bg-[#149c47] px-8 py-2 rounded-lg transition text-lg"
+          className="hover:bg-[#149c47] px-5 py-2 rounded-lg transition text-lg border"
         >
           Dashboard
         </Link>
@@ -22,7 +22,7 @@ const Navbar = () => {
         {location.pathname === "/" && (
           <Link
             to="/addPatient"
-            className="hover:bg-[#149c47] px-8 py-2 rounded-lg transition text-lg"
+            className="hover:bg-[#149c47] px-5 py-2 rounded-lg transition text-lg border"
           >
             Add Patient
           </Link>
