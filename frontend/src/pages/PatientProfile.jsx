@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 const PatientProfile = () => {
   const { patientId } = useParams();
@@ -414,6 +415,8 @@ const PatientProfile = () => {
   }
 
   return (
+    <>
+    <Navbar />
     <div className="p-8 max-w-7xl mx-auto">
       <div className="bg-white rounded-xl p-8 shadow-lg">
         <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">Patient Profile</h1>
@@ -754,6 +757,7 @@ const PatientProfile = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
