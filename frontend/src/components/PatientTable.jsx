@@ -18,7 +18,7 @@ const PatientTable = () => {
                 <th className="px-6 py-3 text-start text-md font-medium uppercase">Patient Name</th>
                 <th className="px-6 py-3 text-start text-md font-medium uppercase">Primary Diagnosis</th>
                 <th className="px-6 py-3 text-start text-md font-medium uppercase">Phone</th>
-                <th className="px-6 py-3 text-end text-md font-medium uppercase">Action</th>
+                <th className="px-12 py-3 text-end text-md font-medium uppercase">Action</th>
               </tr>
             </thead>
             <tbody>

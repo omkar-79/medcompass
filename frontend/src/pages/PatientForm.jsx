@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PatientForm = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const PatientForm = () => {
     email: "",
     preferredTime: "",
   });
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,6 +21,7 @@ const PatientForm = () => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
     // Send formData to backend here
+    navigate('/medicalDetails')
   };
 
   return (
