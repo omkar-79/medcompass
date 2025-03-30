@@ -51,7 +51,7 @@ def test_insert_flow():
     # Insert Discharge Call (linked to hospitalization_id)
     discharge = DischargeCall(
         hospitalization_id=hospitalization_id,
-        call_date="04202024",
+        call_date="2025-03-30 02:00",
         call_status=True,
         category="Cardiovascular Conditions",
         response=["Yes", "No", "Sometimes"],

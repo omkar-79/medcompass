@@ -8,12 +8,12 @@ COLLECTION_NAME = "medical_data"
 
 class MedicalData(BaseModel):
     patient_id: str
-    hospitalization_id: Optional[str] = None  # auto-generated
+    hospitalization_id: Optional[str] = None
     diagnosis: str
     allergies: str
-    admit_date: str  # Format: MMDDYYYY
+    admit_date: str
     discharge_instructions: str
-    follow_up_app_date: str  # Format: MMDDYYYY
+    follow_up_app_date: str
 
     class Config:
         arbitrary_types_allowed = True
