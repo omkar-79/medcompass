@@ -1,20 +1,32 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
+  const location = useLocation();
+
   return (
-    <nav className="flex justify-between items-center p-12">
-      <div className="flex gap-20 px-10">
-        <h1>NARAD</h1>
-        <Link to="/report" className="hover:text-[#20cc5c]">
+    <nav className="bg-[#20cc5c] text-white shadow-md sticky top-0 z-50 flex justify-between items-center px-10">
+      <div className="flex justify-start items-center">
+        <img src={logo} alt="Logo" className="w-72 h-26" />
+      </div>
+
+      <div className="flex justify-end items-center space-x- px-10">
+        <Link
+          to="/"
+          className="hover:bg-[#149c47] px-8 py-2 rounded-lg transition text-lg"
+        >
           Dashboard
         </Link>
-      </div>
-      <div className="flex justify-between items-center gap-10 px-10">
-        <Link to='/addPatient'
-            className="bg-[#20cc5c] hover:bg-[#149c47] text-white font-bold py-2 px-4 rounded">
-          Add Patient
-        </Link>
+
+        {location.pathname === "/" && (
+          <Link
+            to="/addPatient"
+            className="hover:bg-[#149c47] px-8 py-2 rounded-lg transition text-lg"
+          >
+            Add Patient
+          </Link>
+        )}
       </div>
     </nav>
   );

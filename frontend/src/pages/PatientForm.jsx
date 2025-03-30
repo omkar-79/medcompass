@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const PatientForm = () => {
   const [formData, setFormData] = useState({
@@ -45,6 +46,8 @@ const PatientForm = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="flex justify-center pt-20">
       <form onSubmit={handleSubmit} className="w-full max-w-3/4 p-6 shadow-md rounded-lg">
         <h2 className="text-2xl text-center font-semibold mb-8">Patient Details</h2>
@@ -173,6 +176,7 @@ const PatientForm = () => {
         </div>
       </form>
     </div>
+    </>
   );
 };
 

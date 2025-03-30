@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import PatientForm from './pages/PatientForm';
 import PatientProfile from './pages/PatientProfile';
-import ScriptReport from './components/ScriptReport';
+import ScriptReport from './pages/ScriptReport';
 
 function App() {
   return (

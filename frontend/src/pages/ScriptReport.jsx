@@ -1,8 +1,7 @@
 import React from 'react';
-import './ScriptReport.css';
+import Navbar from '../components/Navbar';
 
 const ScriptReport = () => {
-  // This would typically come from your API/backend
   const reportData = {
     reportId: "REP123456",
     patientName: "John Doe",
@@ -25,49 +24,54 @@ const ScriptReport = () => {
   };
 
   return (
-    <div className="report-container">
-      <div className="report-card">
-        <h1 className="report-title">Script Report</h1>
+    <>
+    <Navbar />
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="bg-white rounded-xl p-8 shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">Script Report</h1>
 
-        <div className="info-grid">
-          <div className="info-section">
-            <div className="info-item">
-              <label>Report ID</label>
-              <span>{reportData.reportId}</span>
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div className="space-y-6">
+            <div>
+              <label className="text-sm text-[#1adb5d] block mb-2">Report ID</label>
+              <span className="text-lg text-gray-800 font-medium">{reportData.reportId}</span>
             </div>
-            <div className="info-item">
-              <label>Patient Name</label>
-              <span>{reportData.patientName}</span>
+            <div>
+              <label className="text-sm text-[#1adb5d] block mb-2">Patient Name</label>
+              <span className="text-lg text-gray-800 font-medium">{reportData.patientName}</span>
             </div>
           </div>
-          <div className="info-section">
-            <div className="info-item">
-              <label>Hospitalization Reason</label>
-              <span>{reportData.hospitalizationReason}</span>
+          <div className="space-y-6">
+            <div>
+              <label className="text-sm text-[#1adb5d] block mb-2">Hospitalization Reason</label>
+              <span className="text-lg text-gray-800 font-medium">{reportData.hospitalizationReason}</span>
             </div>
-            <div className="info-item">
-              <label>Discharge Date</label>
-              <span>{reportData.dischargeDate}</span>
+            <div>
+              <label className="text-sm text-[#1adb5d] block mb-2">Discharge Date</label>
+              <span className="text-lg text-gray-800 font-medium">{reportData.dischargeDate}</span>
             </div>
           </div>
         </div>
 
-        <div className="divider"></div>
+        <div className="h-px bg-[#1adb5d] my-8"></div>
 
-        <h2 className="section-title">Patient Responses</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Patient Responses</h2>
 
-        <div className="questions-list">
+        <div className="space-y-4">
           {reportData.questions.map((item, index) => (
-            <div key={index} className="question-card">
-              <h3>Question {index + 1}:</h3>
-              <p className="question-text">{item.question}</p>
-              <label>Response:</label>
-              <p className="response-text">{item.response}</p>
+            <div key={index} className="bg-[#e1f9e1] rounded-lg p-6 border border-[#1adb5d]">
+              <h3 className="text-lg font-medium text-gray-800 mb-2">
+                Question {index + 1}:
+              </h3>
+              <p className="text-gray-700 mb-4">{item.question}</p>
+              <label className="text-sm text-[#1adb5d] block mb-2">Response:</label>
+              <p className="text-gray-700">{item.response}</p>
             </div>
           ))}
         </div>
       </div>
     </div>
+    </>
   );
 };
 
