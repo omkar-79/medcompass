@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 
 const PatientTable = () => {
   const [patients] = useState([
@@ -32,12 +33,12 @@ const PatientTable = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{patient.primaryDiagnosis}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{patient.phone}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                      <button
+                      <Link to='/profile'
                         type="button"
                         className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-[#1adb5d] hover:bg-[#d0f7d0] hover:text-[#149c47] py-1 px-3"
                       >
                         View Patient
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))

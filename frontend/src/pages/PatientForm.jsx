@@ -21,7 +21,7 @@ const PatientForm = () => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
     // Send formData to backend here
-    navigate('/medicalDetails')
+    navigate('/profile')
   };
 
   return (
