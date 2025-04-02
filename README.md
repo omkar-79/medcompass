@@ -10,3 +10,39 @@ MedCompass is a health-focused web application built with React and Vite. It mak
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-%2306B6D4.svg?style=flat&logo=tailwindcss&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-%2347A248.svg?style=flat&logo=mongodb&logoColor=white)
 ![REST API](https://img.shields.io/badge/REST%20API-%232c3e50.svg?style=flat&logo=api&logoColor=white)
+
+
+---
+
+## Installation (Frontend)
+
+To run the MedCompass forntend locally, please follow these steps:
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/omkar-79/medcompass.git
+cd frontend
+
+### 2. Check Node.js and npm versions
+
+Before proceeding, make sure that **Node.js** (v14 or higher) and **npm** are installed on your machine.
+
+- Check your **Node.js** version:
+
+  ```bash
+  node -v
+  npm -v
+
+### 2. Install dependency
+
+- Do npm install in /src folder
+
+   ```bash
+   npm install
+
+### 3. Run the Project
+
+- Do npm run dev
+
+   ```bash
+   npm run dev
